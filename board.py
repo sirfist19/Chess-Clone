@@ -1,4 +1,5 @@
 from essential_fxns import *
+import copy
 
 class Board:
     def __init__(self):
@@ -283,24 +284,32 @@ class Board:
             print("If your King is in check, then you must move your King out of check")
             return False
 
-        #otherwise capture the piece
+        #check about capturing
         is_capturing = self.capture(piece_already_on_des_square)
         squares_to_check = []
 
+        #check the piece itself to see if it is a valid move
         if piece_to_move.name == "Pawn":
             valid_move = piece_to_move.move(des_square, is_capturing)
         else:
             valid_move = piece_to_move.move(des_square)
         
-        if piece_to_move.name != "Pawn" and piece_to_move.name != "Knight" and piece_to_move.name != "King":
-            squares_to_check = piece_to_move.piece_is_blocking(des_square)
-
         #if the piece is a king check to make sure des_square isn't already attacked by the enemy
         if piece_to_move.name == "King":
             des_square_status = self.square_is_attacked[des_square[1]][des_square[0]]
             if des_square_status == 3 or (piece_to_move.color == "white" and des_square_status == 2) or (piece_to_move.color == "black" and des_square_status == 1):
                 print("You cannot move the King onto a square attacked by the enemy")
                 return False
+
+        if piece_to_move.name != "Pawn" and piece_to_move.name != "Knight" and piece_to_move.name != "King":
+            squares_to_check = piece_to_move.piece_is_blocking(des_square)
+
+        #check to see if the piece trying to be moved is pinned
+        #this check comes last because this needs to be a valid move asides from a 
+        #   possible pin
+        
+        if self.is_pinned(piece_to_move, des_square):
+            return False
 
         if not squares_to_check:
             return valid_move
@@ -311,6 +320,36 @@ class Board:
             return False
 
         return valid_move
+
+    def is_pinned(self, piece_to_move, des_square):
+        #emulate the board if the move was made
+        #on this new board check to see if the player that just moved's king is in check
+        #if so then return true, else return false
+
+        #copy the board to try the move on
+        copy_board = copy.deepcopy(self)
+
+        #get the equivalent of piece_to_move on the new board
+        piece_to_move = copy_board.pieces[piece_to_move.coord[1]][piece_to_move.coord[0]]
+        is_white = (piece_to_move.color == "white")
+        
+        #try the move on copy_board
+        copy_board.apply_move(piece_to_move, des_square)
+
+        #check the board and see if by moving the piece the player exposed their king
+        if is_white:
+            king = copy_board.get_king_white()
+            king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
+            if king_status == 2 or king_status == 3: #attacked by black
+                print("The piece to move is pinned.")
+                return True
+        else:
+            king = copy_board.get_king_black()
+            king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
+            if king_status == 1 or king_status == 3: #attacked by white
+                print("The piece to move is pinned.")
+                return True
+        return False
 
     def kingside_castling(self):
         if self.white_turn:
