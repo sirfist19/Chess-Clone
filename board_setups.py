@@ -3,115 +3,133 @@ from essential_fxns import *
 
 empty_board = []
 test_setup = [
-       King("white", chess_notation_to_board_square("e4")),
-       King("black", chess_notation_to_board_square("a8")),
-       Pawn("white", chess_notation_to_board_square("e2")),
-       Pawn("white", chess_notation_to_board_square("f2")),
-       Pawn("white", chess_notation_to_board_square("g2")),
-       Pawn("white", chess_notation_to_board_square("h2")),
-       Pawn("black", chess_notation_to_board_square("e6")),
-       Pawn("white", chess_notation_to_board_square("d6")),
-       Rook("white", chess_notation_to_board_square("a1")),
-       #Bishop("black", chess_notation_to_board_square("e4"))
+       King("white", "e4"),
+       King("black", "a8"),
+       Pawn("white", "e2"),
+       Pawn("white", "f2"),
+       Pawn("white", "g2"),
+       Pawn("white", "h2"),
+       Pawn("black", "e6"),
+       Pawn("white", "d6"),
+       Rook("white", "a1"),
+       #Bishop("black", "e4"))
     ]
+pawn_promotion = [
+    King("white", "a1"),
+    King("black", "f5"),
+    Pawn("white", "f7")
+]
 rook_checkmate = [
-                        Rook("white", chess_notation_to_board_square("a8")),
-                        Rook("white", chess_notation_to_board_square("b7")),
-                        King("black", chess_notation_to_board_square("e8")),
-                        King("white", chess_notation_to_board_square("e1"))
+                        Rook("white", "a8"),
+                        Rook("white", "b7"),
+                        King("black", "e8"),
+                        King("white", "e1")
                 ]
 rook_checkmate2 = [
-                        Rook("black", chess_notation_to_board_square("a8")),
-                        Rook("black", chess_notation_to_board_square("b7")),
-                        King("white", chess_notation_to_board_square("e8")),
-                        King("black", chess_notation_to_board_square("e1"))
+                        Rook("black", "a8"),
+                        Rook("black", "b7"),
+                        King("white", "e8"),
+                        King("black", "e1")
                 ]
 queen_king_checkmate1 = [
-                        Queen("black", chess_notation_to_board_square("e7")),
-                        King("black", chess_notation_to_board_square("e6")),
-                        King("white", chess_notation_to_board_square("e8"))
+                        Queen("black", "e7"),
+                        King("black", "e6"),
+                        King("white", "e8")
                 ]
 rook_endgame = [
-                        Rook("white", chess_notation_to_board_square("a8")),
-                        King("white", chess_notation_to_board_square("d3")),
-                        King("black", chess_notation_to_board_square("d5"))
+                        Rook("white", "a8"),
+                        King("white", "d3"),
+                        King("black", "d5")
 
     ]
+testing_checkmate = [
+    King("white", "e8"),
+    King("black", "e6"),
+    Rook("black", "a8"),
+    Rook("white", "c1")
+]
+bishop_influence_test = [
+    King("black", "e8"),
+    King("white", "e6"),
+    Bishop("white", "c3"),
+    Pawn("black", "e5")
+]
 
 pins = [
-    King("white", chess_notation_to_board_square("d8")),
-    King("black", chess_notation_to_board_square("b1")),
-    Knight("white", chess_notation_to_board_square("d5")),
-    Rook("black", chess_notation_to_board_square("d1"))
+    King("white", "d8"),
+    King("black", "b1"),
+    Knight("white", "d5"),
+    Rook("black", "d1")
 ]
 pinned_queen = [
-    King("black", chess_notation_to_board_square("d8")),
-    King("white", chess_notation_to_board_square("b1")),
-    Queen("black", chess_notation_to_board_square("f6")),
-    Bishop("white", chess_notation_to_board_square("h4")),
-    Pawn("white", chess_notation_to_board_square("g3"))
+    King("black", "d8"),
+    King("white", "b1"),
+    Queen("black", "f6"),
+    Bishop("white", "h4"),
+    Pawn("white", "g3"),
+    Pawn("black", "a6")
 ]
 
 in_check1 = [
-       King("white", chess_notation_to_board_square("e1")),
-       King("black", chess_notation_to_board_square("a8")),
-       Pawn("white", chess_notation_to_board_square("e2")),
-       Pawn("white", chess_notation_to_board_square("f2")),
-       Pawn("white", chess_notation_to_board_square("g2")),
-       Pawn("white", chess_notation_to_board_square("h2")),
-       #Pawn("white", chess_notation_to_board_square("d2")),
-       Pawn("black", chess_notation_to_board_square("e6")),
-       Pawn("black", chess_notation_to_board_square("d6")),
-       Rook("black", chess_notation_to_board_square("a1")),
-       Bishop("black", chess_notation_to_board_square("e4"))
+       King("white", "e1"),
+       King("black", "a8"),
+       Pawn("white", "e2"),
+       Pawn("white", "f2"),
+       Pawn("white", "g2"),
+       Pawn("white", "h2"),
+       #Pawn("white", "d2")),
+       Pawn("black", "e6"),
+       Pawn("black", "d6"),
+       Rook("black", "a1"),
+       Bishop("black", "e4")
     ]
 kingside_castling = [
-        King("white", chess_notation_to_board_square("e1")),
-        Rook("white", chess_notation_to_board_square("h1")),
-        King("black", chess_notation_to_board_square("e8")),
-        Rook("black", chess_notation_to_board_square("h8"))
+        King("white", "e1"),
+        Rook("white", "h1"),
+        King("black", "e8"),
+        Rook("black", "h8")
     ]
 queenside_castling = [
-        King("white", chess_notation_to_board_square("e1")),
-        Rook("white", chess_notation_to_board_square("a1")),
-        King("black", chess_notation_to_board_square("e8")),
-        Rook("black", chess_notation_to_board_square("a8"))
+        King("white", "e1"),
+        Rook("white", "a1"),
+        King("black", "e8"),
+        Rook("black", "a8")
     ]
 standard_setup = [
                         #white
-                        Rook("white", chess_notation_to_board_square("a1")),
-                        Knight("white", chess_notation_to_board_square("b1")),
-                        Bishop("white", chess_notation_to_board_square("c1")),
-                        Queen("white", chess_notation_to_board_square("d1")),
-                        King("white", chess_notation_to_board_square("e1")),
-                        Bishop("white", chess_notation_to_board_square("f1")),
-                        Knight("white", chess_notation_to_board_square("g1")),
-                        Rook("white", chess_notation_to_board_square("h1")),
-                        Pawn("white", chess_notation_to_board_square("a2")),
-                        Pawn("white", chess_notation_to_board_square("b2")),
-                        Pawn("white", chess_notation_to_board_square("c2")),
-                        Pawn("white", chess_notation_to_board_square("d2")),
-                        Pawn("white", chess_notation_to_board_square("e2")),
-                        Pawn("white", chess_notation_to_board_square("f2")),
-                        Pawn("white", chess_notation_to_board_square("g2")),
-                        Pawn("white", chess_notation_to_board_square("h2")),
+                        Rook("white", "a1"),
+                        Knight("white", "b1"),
+                        Bishop("white", "c1"),
+                        Queen("white", "d1"),
+                        King("white", "e1"),
+                        Bishop("white", "f1"),
+                        Knight("white", "g1"),
+                        Rook("white", "h1"),
+                        Pawn("white", "a2"),
+                        Pawn("white", "b2"),
+                        Pawn("white", "c2"),
+                        Pawn("white", "d2"),
+                        Pawn("white", "e2"),
+                        Pawn("white", "f2"),
+                        Pawn("white", "g2"),
+                        Pawn("white", "h2"),
                                 
 
                         #black
-                        Rook("black", chess_notation_to_board_square("a8")),
-                        Knight("black", chess_notation_to_board_square("b8")),
-                        Bishop("black", chess_notation_to_board_square("c8")),
-                        Queen("black", chess_notation_to_board_square("d8")),
-                        King("black", chess_notation_to_board_square("e8")),
-                        Bishop("black", chess_notation_to_board_square("f8")),
-                        Knight("black", chess_notation_to_board_square("g8")),
-                        Rook("black", chess_notation_to_board_square("h8")),
-                        Pawn("black", chess_notation_to_board_square("a7")),
-                        Pawn("black", chess_notation_to_board_square("b7")),
-                        Pawn("black", chess_notation_to_board_square("c7")),
-                        Pawn("black", chess_notation_to_board_square("d7")),
-                        Pawn("black", chess_notation_to_board_square("e7")),
-                        Pawn("black", chess_notation_to_board_square("f7")),
-                        Pawn("black", chess_notation_to_board_square("g7")),
-                        Pawn("black", chess_notation_to_board_square("h7")),
+                        Rook("black", "a8"),
+                        Knight("black", "b8"),
+                        Bishop("black", "c8"),
+                        Queen("black", "d8"),
+                        King("black", "e8"),
+                        Bishop("black", "f8"),
+                        Knight("black", "g8"),
+                        Rook("black", "h8"),
+                        Pawn("black", "a7"),
+                        Pawn("black", "b7"),
+                        Pawn("black", "c7"),
+                        Pawn("black", "d7"),
+                        Pawn("black", "e7"),
+                        Pawn("black", "f7"),
+                        Pawn("black", "g7"),
+                        Pawn("black", "h7"),
         ]

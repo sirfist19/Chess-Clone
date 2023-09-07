@@ -1,4 +1,30 @@
 import os
+import pygame, sys
+from pygame.locals import *
+pygame.init()
+
+# colors 
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+blue = (0, 0, 255)
+light_blue = (0, 0, 150)
+green = (0, 255, 0)
+light_gray = (178, 190, 181)
+golden_brown = (153, 101, 21)
+gray = (60, 60, 60)
+gold = (0xff, 0xd7, 0x00)
+brown = (0x96, 0x4B, 0x00) #964B00
+
+dark_color = golden_brown
+light_color = white
+
+WIDTH = 800
+HEIGHT = 800
+NUM_TILES_WIDE = 8
+NUM_TILES_TALL = 8
+TILE_WIDTH = 100
+FPS = 60
 
 def chess_notation_to_board_square(player_square):
     x_char = player_square[0]
@@ -47,7 +73,7 @@ def process_input(player_input):
     
 
 def identify_type_of_piece_to_move(first_letter):
-    is_pawn = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'x'}
+    is_pawn = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
     if first_letter in is_pawn:
         return "Pawn"
     elif first_letter == 'n' or first_letter == 'N':

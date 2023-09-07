@@ -4,6 +4,10 @@ from essential_fxns import *
 from board import Board
 from board_setups import *
 
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Chess')
+clock = pygame.time.Clock()
+
 if __name__ == "__main__":
     board = Board()
     
@@ -11,6 +15,10 @@ if __name__ == "__main__":
         #test_setup
         standard_setup
         #pinned_queen
+        #bishop_influence_test
+        #testing_checkmate
+        #in_check1
+        #pawn_promotion
     )
 
     clear()
@@ -22,14 +30,40 @@ if __name__ == "__main__":
     #board.display_all_pieces_protected()
     board.display()
     board.game_over = board.check_game_over()
-
+    
     #TIP: Input is formated in typical algebraic chess notation
     #    Ex: a4, or Re5
+    
+    def draw_grid():
+        for i in range(8):
+            for j in range(8):
+                rect = pygame.Rect(i*TILE_WIDTH , j*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH)
+                if i%2==0: # even row
+                    if j%2==0:
+                        pygame.draw.rect(screen, dark_color, rect)
+                    else:
+                        pygame.draw.rect(screen, light_color, rect)
+                else:
+                    if j%2==0:
+                        pygame.draw.rect(screen, light_color, rect)
+                    else:
+                        pygame.draw.rect(screen, dark_color, rect)
 
     #main game loop
-    while not board.game_over:
+    while True:#not board.game_over:
         #get input
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+        screen.fill(black)
+        draw_grid()
+        board.draw_pieces(screen)
+        pygame.display.update()
+
         print(">", end = '')
+        
         player_in = input()
 
         clear()
@@ -43,7 +77,9 @@ if __name__ == "__main__":
                 print("White's turn to move.")
             else:
                 print("Black's turn to move.")
-
+        
+        
+        clock.tick(FPS)
     print("Bye bye. See you next time!")
     
         

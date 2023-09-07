@@ -4,7 +4,7 @@ from essential_fxns import *
 class Pawn:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.value = self.get_value_given_color()
         self.name = "Pawn"
         self.influence = []
@@ -95,7 +95,7 @@ class Pawn:
 class Knight:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.value = self.get_value_given_color()
         self.name = "Knight"
         self.protected = False
@@ -151,7 +151,7 @@ class Knight:
 class Bishop:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.name = "Bishop"
         self.value = self.get_value_given_color()
         self.protected = False
@@ -228,7 +228,7 @@ class Bishop:
 class Rook:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.name = "Rook"
         self.value = self.get_value_given_color()
         self.protected = False
@@ -286,7 +286,7 @@ class Rook:
 class Queen:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.name = "Queen"
         self.value = self.get_value_given_color()
         self.protected = False
@@ -388,7 +388,7 @@ class Queen:
 class King:  
     def __init__(self, color, coord):
         self.color = color
-        self.coord = coord
+        self.coord = chess_notation_to_board_square(coord)
         self.name = "King"
         self.value = self.get_value_given_color()
         self.protected = False

@@ -5,7 +5,7 @@ class Board:
     def __init__(self):
         self.empty_char = "."
         self.content = [[self.empty_char for i in range(8)] for j in range(8)]
-        self.pieces = [[[] for i in range(8)] for j in range(8)] #keeps track of all the pieces, if a cell is empty then this is empty, if it has a piece then it is stored here
+        self.pieces = [[None for i in range(8)] for j in range(8)] #keeps track of all the pieces, if a cell is empty then this is empty, if it has a piece then it is stored here
         self.square_is_attacked = [[0 for i in range(8)] for j in range(8)] #0 for not attacked, 1 for attacked by white, 2 for attacked by black, 3 for attacked by both
         self.white_turn = True
         self.game_over = False
@@ -19,9 +19,67 @@ class Board:
             for square in line:
                 to_print += square
             print(to_print)
-        
         print("========================================")
+    
+    def scale_img(self, img, scale_factor):
+        return pygame.transform.scale(img, 
+                                      (img.get_width() * scale_factor, 
+                                       img.get_height() * scale_factor))
+    
+    def draw_pieces(self, screen):
+        pawn_white_sprite = pygame.image.load("./sprites/white_pawn.png")
+        pawn_black_sprite = pygame.image.load("./sprites/black_pawn.png")
+        knight_white_sprite = pygame.image.load("./sprites/white_knight.png")
+        knight_black_sprite = pygame.image.load("./sprites/black_knight.png")
+        bishop_white_sprite = pygame.image.load("./sprites/white_bishop.png")
+        bishop_black_sprite = pygame.image.load("./sprites/black_bishop.png")
+        rook_white_sprite = pygame.image.load("./sprites/white_rook.png")
+        rook_black_sprite = pygame.image.load("./sprites/black_rook.png")
+        queen_white_sprite = pygame.image.load("./sprites/white_queen.png")
+        queen_black_sprite = pygame.image.load("./sprites/black_queen.png")
+        king_white_sprite = pygame.image.load("./sprites/white_king.png")
+        king_black_sprite = pygame.image.load("./sprites/black_king.png")
 
+        scale_factor = 0.23
+        for i in range(8):
+            for j in range(8):
+                if self.pieces[i][j]:
+                    cur_piece = self.pieces[i][j]
+                    if cur_piece.name == "Pawn":
+                        if cur_piece.color == "white":
+                            cur_sprite = pawn_white_sprite
+                        else: 
+                            cur_sprite = pawn_black_sprite
+                    elif cur_piece.name == "Knight":
+                        if cur_piece.color == "white":
+                            cur_sprite = knight_white_sprite
+                        else:
+                            cur_sprite = knight_black_sprite
+                    elif cur_piece.name == "King":
+                        if cur_piece.color == "white":
+                            cur_sprite = king_white_sprite
+                        else:
+                            cur_sprite = king_black_sprite
+                    elif cur_piece.name == "Queen":
+                        if cur_piece.color == "white":
+                            cur_sprite = queen_white_sprite
+                        else:
+                            cur_sprite = queen_black_sprite
+                    elif cur_piece.name == "Bishop":
+                        if cur_piece.color == "white":
+                            cur_sprite = bishop_white_sprite
+                        else:
+                            cur_sprite = bishop_black_sprite
+                    elif cur_piece.name == "Rook":
+                        if cur_piece.color == "white":
+                            cur_sprite = rook_white_sprite
+                        else:
+                            cur_sprite = rook_black_sprite
+                    
+                    cur_sprite = self.scale_img(cur_sprite, scale_factor)
+                    coord = (j*TILE_WIDTH, i*TILE_WIDTH)
+                    screen.blit(cur_sprite, coord)
+    
     def set_square_empty(self, coord):
         self.content[coord[1]][coord[0]] = self.empty_char
         self.pieces[coord[1]][coord[0]] = []
@@ -42,8 +100,8 @@ class Board:
 
         return (black_wins or white_wins)
         
-
     def check_checkmate(self, king): #check if the passed in king is checkmated
+        print("Checking checkmate")
         king_is_white = (king.color == "white")
 
         #the king is in check
@@ -61,12 +119,37 @@ class Board:
             if not king_is_white and piece_on_square and piece_on_square.color == "black":
                 continue
 
-            #if the king is white and the square is only attacked by white or not attacked the king can move here
-            if king_is_white and (square_status == 0 or square_status == 1): 
-                return False
-            if not king_is_white and (square_status == 0 or square_status == 2):
-                return False
+        # Go through all the pieces and see if they can block (the color must be the same)
+        for i in range(8):
+            for j in range(8):
+                cur_piece = self.pieces[i][j]
+                if not cur_piece:
+                    continue
+                if cur_piece.color != king.color:
+                    continue
+                
+                for square in cur_piece.influence:
+                    #can piece move there
+                    print("Piece is trying to block:", cur_piece, "moving from", (j,i), "to ", square, cur_piece.color)
+                    copy_board = copy.deepcopy(self) 
+                    success = copy_board.move_is_valid((j,i), square)
+                    print(success)
+                    if success:
+                        new_cur_piece = copy_board.pieces[cur_piece.coord[1]][cur_piece.coord[0]]
+                        copy_board.apply_move(new_cur_piece, square)
+                        print("Displaying copy board")
+                        copy_board.display()
+                        #copy_board.display_all_square_attack_status()
 
+                        # check if king is still in check
+                        if king.color == "white":
+                            new_king = copy_board.get_king_white()
+                        else:
+                            new_king = copy_board.get_king_black()
+                        in_check = copy_board.king_in_check(new_king)
+                        print("In check: ", in_check)
+                        if not in_check:
+                            return False
         return True
 
     def king_in_check(self, king):
@@ -106,11 +189,11 @@ class Board:
         #if so, returns true
         #else returns false
         if not squares_to_check: #no squares to check so there is no piece blocking
-            print("Error squares to check is empty")
+            #print("Error squares to check is empty")
             return False
 
         for square in squares_to_check:
-            if self.pieces[square[1]][square[0]] and self.pieces[square[1]][square[0]].name != "King": #if the king is blocking then the influence can still go past him
+            if self.pieces[square[1]][square[0]]: #and self.pieces[square[1]][square[0]].name != "King": #if the king is blocking then the influence can still go past him
                 return True
         return False
         
@@ -158,6 +241,7 @@ class Board:
     def apply_move(self, piece, des_square): #move a piece
         self.set_square_empty(piece.coord)
         self.set_square_with_piece(piece, des_square)
+        print("moved ", piece, "to ", des_square)
         piece.coord = des_square
 
         piece.has_moved = True
@@ -167,6 +251,8 @@ class Board:
 
         #update the attacked squares and protected pieces
         self.update_attack_and_protect_status()
+
+        #self.display()
 
         
 
@@ -280,9 +366,9 @@ class Board:
         else:
             king = self.get_king_black()
         in_check = self.king_in_check(king)
-        if in_check and piece_to_move.name != "King":
-            print("If your King is in check, then you must move your King out of check")
-            return False
+        #if in_check and piece_to_move.name != "King":
+        #    print("If your King is in check, then you must move your King out of check")
+        #    return False
 
         #check about capturing
         is_capturing = self.capture(piece_already_on_des_square)
@@ -327,7 +413,7 @@ class Board:
         #if so then return true, else return false
 
         #copy the board to try the move on
-        copy_board = copy.deepcopy(self)
+        copy_board = copy.deepcopy(self) # deepcopy before
 
         #get the equivalent of piece_to_move on the new board
         piece_to_move = copy_board.pieces[piece_to_move.coord[1]][piece_to_move.coord[0]]
@@ -339,14 +425,18 @@ class Board:
         #check the board and see if by moving the piece the player exposed their king
         if is_white:
             king = copy_board.get_king_white()
-            king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
-            if king_status == 2 or king_status == 3: #attacked by black
+            in_check = copy_board.king_in_check(king)
+            #king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
+            #if king_status == 2 or king_status == 3: #attacked by black
+            if in_check:
                 print("The piece to move is pinned.")
                 return True
         else:
             king = copy_board.get_king_black()
-            king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
-            if king_status == 1 or king_status == 3: #attacked by white
+            in_check = copy_board.king_in_check(king)
+            #king_status = copy_board.square_is_attacked[king.coord[1]][king.coord[0]]
+            #if king_status == 1 or king_status == 3: #attacked by white
+            if in_check:
                 print("The piece to move is pinned.")
                 return True
         return False
